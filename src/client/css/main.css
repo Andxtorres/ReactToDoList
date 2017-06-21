@@ -1,0 +1,45 @@
+
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+ul{
+	list-style-type:none;
+	padding:0px;
+	margin-top: 20px;
+}
+
+li{
+	padding:10px;
+}
+.done{
+	text-decoration: line-through;
+}
+
+.btn{
+	margin-top:10px;
+}
+
+h2{
+	
+}
+
+#app{
+	padding-top: 42px;
+}
+
+.doneButton{
+	color:white;
+    right: 30px;
+    position: absolute;	
+}
+
+
+
+
+
+
+
+
+

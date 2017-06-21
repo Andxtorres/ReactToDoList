@@ -8,9 +8,9 @@ class ContactForm extends React.Component{
 			<div className="todoListMain">
 			  <div className="header">
 				<form onSubmit={this.props.addItem}>
-				  <input ref={this.props.textValue} placeholder="Enter Info">
+				  <input ref={this.props.textValue} className="form-control" placeholder="Enter Info">
 				  </input>
-				  <button type="submit" >add</button>
+				  <button type="submit" className="btn btn-info">Add</button>
 				</form>
 			  </div>
 			</div>
@@ -19,13 +19,17 @@ class ContactForm extends React.Component{
 	
 }
 class TodoItems extends React.Component{
-	
+
 	render (){
 		var todoEntries = this.props.entries;
 		function createTasks(item) {
-		  return <li key={item.key}>{item.text}</li>
+			if(item.isDone){
+			  return <li key={item.key} className="bg-primary done">{item.text}<a className="doneButton" href="#" onClick={() => this.props.markAsDone(item.key)}>Done</a></li>
+			}else{
+				return <li key={item.key} className="bg-primary">{item.text}<a className="doneButton" href="#" onClick={() => this.props.markAsDone(item.key)}>Done</a></li>				
+			}
 		}	
-		var listItems = todoEntries.map(createTasks);
+		var listItems = todoEntries.map(createTasks,this);
 		return (
 			<ul>
 				{listItems}
@@ -38,19 +42,37 @@ class App extends React.Component {
 	constructor(props){
 		super(props);
 		this.addItem = this.addItem.bind(this);	
-		this.state={items: []};
+		this.markAsDone = this.markAsDone.bind(this);	
+		if(localStorage.getItem('items')!=null){
+			
+			this.state={items: JSON.parse(localStorage.getItem('items'))};
+			console.log(this.state);
+		}else{
+			this.state={items: []};
+		}
 	}
+	markAsDone(key){
+        var index = this.state.items.map(function(d){
+            return d.key;
+        }).indexOf(key);	
+		this.state.items[index].isDone=true;
+		this.setState({items:this.state.items});
+		localStorage.setItem('items',JSON.stringify(this.state.items));
+
+	}	
 	addItem(e) {
 		var itemArray = this.state.items;
 		itemArray.push(
 		{
+			isDone:false,
 			text:this.textInput.value,
-			key:Date.now()
+			key:Date.now(),
+			
 		}
 		);
 		this.setState({items:itemArray});
+		localStorage.setItem('items',JSON.stringify(itemArray));
 		this.textInput.value= "";
-		console.log(this.state);
 		e.preventDefault();
 	}	
   render () {
@@ -59,7 +81,7 @@ class App extends React.Component {
 		<div>
 		<p>{text}</p>
 		<ContactForm addItem={this.addItem} textValue={(input=>this.textInput=input)}/>
-		<TodoItems entries={this.state.items}/>
+		<TodoItems markAsDone={this.markAsDone} entries={this.state.items}/>
 
 		</div>
 	);
